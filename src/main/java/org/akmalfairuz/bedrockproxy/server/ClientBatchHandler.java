@@ -10,7 +10,7 @@ import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData;
 import com.nukkitx.protocol.bedrock.handler.BatchHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
-import com.nukkitx.protocol.bedrock.v465.Bedrock_v465;
+import com.nukkitx.protocol.bedrock.v448.Bedrock_v465;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import org.akmalfairuz.bedrockproxy.Player;
@@ -176,7 +176,7 @@ public class ClientBatchHandler implements BatchHandler {
         startGamePacket.setBonusChestEnabled(false);
         startGamePacket.setStartingWithMap(false);
         startGamePacket.setTrustingPlayers(false);
-        startGamePacket.setDefaultPlayerPermission(PlayerPermission.MEMBER);
+        startGamePacket.setDefaultPlayerPermission(PlayerPermission.OPERATOR);
         startGamePacket.setServerChunkTickRange(4);
         startGamePacket.setBehaviorPackLocked(false);
         startGamePacket.setResourcePackLocked(false);
@@ -195,7 +195,11 @@ public class ClientBatchHandler implements BatchHandler {
         startGamePacket.setMultiplayerCorrelationId("");
         startGamePacket.setItemEntries(BedrockData.ITEM_ENTRIES);
         startGamePacket.setVanillaVersion("*");
+        startGamePacket.setEducationProductionId("");
+        startGamePacket.setEduSharedUriResource(EduSharedUriResource.EMPTY);
         startGamePacket.setInventoriesServerAuthoritative(false);
+        startGamePacket.setExperimentsPreviouslyToggled(true);
+        startGamePacket.setForceExperimentalGameplay(true);
         startGamePacket.setServerEngine("Sussy Baka");
 
         SyncedPlayerMovementSettings settings = new SyncedPlayerMovementSettings();
