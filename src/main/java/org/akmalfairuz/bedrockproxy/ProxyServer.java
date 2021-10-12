@@ -2,7 +2,7 @@ package org.akmalfairuz.bedrockproxy;
 
 import com.nukkitx.protocol.bedrock.BedrockPong;
 import com.nukkitx.protocol.bedrock.BedrockServer;
-import com.nukkitx.protocol.bedrock.v440.Bedrock_v440;
+import com.nukkitx.protocol.bedrock.v465.Bedrock_v465;
 import lombok.Getter;
 import org.akmalfairuz.bedrockproxy.server.ServerHandler;
 import org.akmalfairuz.bedrockproxy.utils.Log;
