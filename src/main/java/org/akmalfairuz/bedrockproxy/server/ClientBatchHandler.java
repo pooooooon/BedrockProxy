@@ -10,7 +10,7 @@ import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData;
 import com.nukkitx.protocol.bedrock.handler.BatchHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
-import com.nukkitx.protocol.bedrock.v440.Bedrock_v440;
+import com.nukkitx.protocol.bedrock.v465.Bedrock_v465;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import org.akmalfairuz.bedrockproxy.Player;
@@ -56,14 +56,14 @@ public class ClientBatchHandler implements BatchHandler {
 
     public boolean handlePacket(BedrockPacket packet) {
         if(packet instanceof LoginPacket) {
-            if(((LoginPacket) packet).getProtocolVersion() != 440) {
-                session.sendPacketImmediately(player.getServerHandler().createDisconnect("Please use Minecraft v1.17.0 (Protocol 440) to join this server."));
+            if(((LoginPacket) packet).getProtocolVersion() != 465) {
+                session.sendPacketImmediately(player.getServerHandler().createDisconnect("Please use Minecraft v1.17.30 (Protocol 465) to join this server."));
                 session.disconnect();
                 return true;
             }
             player.setLoginPacket((LoginPacket) packet);
-
-            session.setPacketCodec(Bedrock_v440.V440_CODEC);
+            //TODO:muliprotocol
+            session.setPacketCodec(Bedrock_v465.V465_CODEC);
 
             PlayStatusPacket status = new PlayStatusPacket();
             status.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
@@ -79,7 +79,7 @@ public class ClientBatchHandler implements BatchHandler {
         if(packet instanceof ResourcePackClientResponsePacket) {
             if(((ResourcePackClientResponsePacket) packet).getStatus() == ResourcePackClientResponsePacket.Status.HAVE_ALL_PACKS) {
                 ResourcePackStackPacket packStackPacket = new ResourcePackStackPacket();
-                packStackPacket.setGameVersion("1.17.0");
+                packStackPacket.setGameVersion("1.17.30");
                 packStackPacket.setExperimentsPreviouslyToggled(false);
                 packStackPacket.setForcedToAccept(false);
                 session.sendPacket(packStackPacket);
@@ -152,7 +152,7 @@ public class ClientBatchHandler implements BatchHandler {
         startGamePacket.setUniqueEntityId(entityId);
         startGamePacket.setRuntimeEntityId(entityId);
         startGamePacket.setPlayerGameType(GameType.SURVIVAL);
-        startGamePacket.setPlayerPosition(Vector3f.from(99999, 69, 99999));
+        startGamePacket.setPlayerPosition(Vector3f.from(696969, 69, 696969));
         startGamePacket.setRotation(Vector2f.from(1, 1));
 
         startGamePacket.setSeed(-1);
@@ -161,13 +161,13 @@ public class ClientBatchHandler implements BatchHandler {
         startGamePacket.setLevelGameType(GameType.SURVIVAL);
         startGamePacket.setDifficulty(1);
         startGamePacket.setDefaultSpawn(Vector3i.ZERO);
-        startGamePacket.setAchievementsDisabled(true);
+        startGamePacket.setAchievementsDisabled(false);
         startGamePacket.setCurrentTick(-1);
         startGamePacket.setEduEditionOffers(0);
-        startGamePacket.setEduFeaturesEnabled(false);
+        startGamePacket.setEduFeaturesEnabled(true);
         startGamePacket.setRainLevel(0);
         startGamePacket.setLightningLevel(0);
-        startGamePacket.setMultiplayerGame(true);
+        startGamePacket.setMultiplayerGame(false);
         startGamePacket.setBroadcastingToLan(true);
         startGamePacket.setPlatformBroadcastMode(GamePublishSetting.PUBLIC);
         startGamePacket.setXblBroadcastMode(GamePublishSetting.PUBLIC);
@@ -185,7 +185,7 @@ public class ClientBatchHandler implements BatchHandler {
         startGamePacket.setFromWorldTemplate(false);
         startGamePacket.setWorldTemplateOptionLocked(false);
 
-        String serverName = "BedrockProxy";
+        String serverName = "Sussy Baka";
         startGamePacket.setLevelId(serverName);
         startGamePacket.setLevelName(serverName);
 
@@ -196,7 +196,7 @@ public class ClientBatchHandler implements BatchHandler {
         startGamePacket.setItemEntries(BedrockData.ITEM_ENTRIES);
         startGamePacket.setVanillaVersion("*");
         startGamePacket.setInventoriesServerAuthoritative(false);
-        startGamePacket.setServerEngine("");
+        startGamePacket.setServerEngine("Sussy Baka");
 
         SyncedPlayerMovementSettings settings = new SyncedPlayerMovementSettings();
         settings.setMovementMode(AuthoritativeMovementMode.CLIENT);
@@ -217,6 +217,7 @@ public class ClientBatchHandler implements BatchHandler {
         session.sendPacket(entityPacket);
 
         CreativeContentPacket packet = new CreativeContentPacket();
+        //TODO:creative item
         packet.setContents(new ItemData[0]);
         session.sendPacket(packet);
 
@@ -228,12 +229,12 @@ public class ClientBatchHandler implements BatchHandler {
         attributesPacket.setRuntimeEntityId(entityId);
         // Default move speed
         // Bedrock clients move very fast by default until they get an attribute packet correcting the speed
-        attributesPacket.setAttributes(Collections.singletonList(
-                new AttributeData("minecraft:movement", 0.0f, 1024f, 0.1f, 0.1f)));
+        attributesPacket.setAttributes(Collections.singletonList(new AttributeData("minecraft:movement", 0.0f, 1024f, 0.1f, 0.1f)));
         session.sendPacket(attributesPacket);
 
         GameRulesChangedPacket gamerulePacket = new GameRulesChangedPacket();
         gamerulePacket.getGameRules().add(new GameRuleData<>("naturalregeneration", false));
+        gamerulePacket.getGameRules().add(new GameRuleData<>("showcoordinates", true));
         session.sendPacket(gamerulePacket);
     }
 
