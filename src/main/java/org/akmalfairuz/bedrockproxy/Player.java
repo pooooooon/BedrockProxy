@@ -12,7 +12,7 @@ import com.nukkitx.protocol.bedrock.data.SoundEvent;
 import com.nukkitx.protocol.bedrock.data.entity.EntityFlag;
 import com.nukkitx.protocol.bedrock.data.entity.EntityFlags;
 import com.nukkitx.protocol.bedrock.packet.*;
-import com.nukkitx.protocol.bedrock.v465.Bedrock_v465;
+import com.nukkitx.protocol.bedrock.v448.Bedrock_v465;
 import lombok.Getter;
 import lombok.Setter;
 import org.akmalfairuz.bedrockproxy.auth.LoginPacketGenerator;
