@@ -10,7 +10,7 @@ import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData;
 import com.nukkitx.protocol.bedrock.handler.BatchHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
-import com.nukkitx.protocol.bedrock.v448.Bedrock_v465;
+import com.nukkitx.protocol.bedrock.v471.Bedrock_v471;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import org.akmalfairuz.bedrockproxy.Player;
@@ -56,15 +56,14 @@ public class ClientBatchHandler implements BatchHandler {
 
     public boolean handlePacket(BedrockPacket packet) {
         if(packet instanceof LoginPacket) {
-            if(((LoginPacket) packet).getProtocolVersion() != 465) {
+            if(((LoginPacket) packet).getProtocolVersion() != 471) {
                 session.sendPacketImmediately(player.getServerHandler().createDisconnect("Please use Minecraft v1.17.30 (Protocol 465) to join this server."));
                 session.disconnect();
                 return true;
             }
             player.setLoginPacket((LoginPacket) packet);
             //TODO:muliprotocol
-            session.setPacketCodec(Bedrock_v465.V465_CODEC);
-
+            session.setPacketCodec(Bedrock_v471.V471_CODEC);
             PlayStatusPacket status = new PlayStatusPacket();
             status.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
             session.sendPacket(status);
@@ -79,7 +78,7 @@ public class ClientBatchHandler implements BatchHandler {
         if(packet instanceof ResourcePackClientResponsePacket) {
             if(((ResourcePackClientResponsePacket) packet).getStatus() == ResourcePackClientResponsePacket.Status.HAVE_ALL_PACKS) {
                 ResourcePackStackPacket packStackPacket = new ResourcePackStackPacket();
-                packStackPacket.setGameVersion("1.17.30");
+                packStackPacket.setGameVersion("1.17.40");
                 packStackPacket.setExperimentsPreviouslyToggled(false);
                 packStackPacket.setForcedToAccept(false);
                 session.sendPacket(packStackPacket);
