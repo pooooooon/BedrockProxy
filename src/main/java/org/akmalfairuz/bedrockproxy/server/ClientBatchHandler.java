@@ -10,7 +10,7 @@ import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData;
 import com.nukkitx.protocol.bedrock.handler.BatchHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
-import com.nukkitx.protocol.bedrock.v471.Bedrock_v471;
+import com.nukkitx.protocol.bedrock.v475.Bedrock_v475;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import org.akmalfairuz.bedrockproxy.Player;
@@ -56,14 +56,14 @@ public class ClientBatchHandler implements BatchHandler {
 
     public boolean handlePacket(BedrockPacket packet) {
         if(packet instanceof LoginPacket) {
-            if(((LoginPacket) packet).getProtocolVersion() != 471) {
-                session.sendPacketImmediately(player.getServerHandler().createDisconnect("Please use Minecraft v1.17.30 (Protocol 465) to join this server."));
+            if(((LoginPacket) packet).getProtocolVersion() != 475) {
+                session.sendPacketImmediately(player.getServerHandler().createDisconnect("Please use Minecraft v1.18.0 (Protocol 475) to join this server."));
                 session.disconnect();
                 return true;
             }
             player.setLoginPacket((LoginPacket) packet);
             //TODO:muliprotocol
-            session.setPacketCodec(Bedrock_v471.V471_CODEC);
+            session.setPacketCodec(Bedrock_v475.V475_CODEC);
             PlayStatusPacket status = new PlayStatusPacket();
             status.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
             session.sendPacket(status);
@@ -78,7 +78,7 @@ public class ClientBatchHandler implements BatchHandler {
         if(packet instanceof ResourcePackClientResponsePacket) {
             if(((ResourcePackClientResponsePacket) packet).getStatus() == ResourcePackClientResponsePacket.Status.HAVE_ALL_PACKS) {
                 ResourcePackStackPacket packStackPacket = new ResourcePackStackPacket();
-                packStackPacket.setGameVersion("1.17.40");
+                packStackPacket.setGameVersion("1.18.0");
                 packStackPacket.setExperimentsPreviouslyToggled(false);
                 packStackPacket.setForcedToAccept(false);
                 session.sendPacket(packStackPacket);
@@ -126,7 +126,7 @@ public class ClientBatchHandler implements BatchHandler {
     }
 
     public void sendEmptyChunk() {
-        Vector3i position = Vector3i.from(99999, 60, 99999);
+        Vector3i position = Vector3i.from(696969, 69, 696969);
         int radius = 0;
         int chunkX = position.getX() >> 4;
         int chunkZ = position.getZ() >> 4;
@@ -135,7 +135,7 @@ public class ClientBatchHandler implements BatchHandler {
                 LevelChunkPacket data = new LevelChunkPacket();
                 data.setChunkX(chunkX + x);
                 data.setChunkZ(chunkZ + z);
-                data.setSubChunksLength(0);
+                data.setSubChunksLength(25);//idk
                 data.setData(getEmptyChunkData());
                 data.setCachingEnabled(false);
                 session.sendPacket(data);
