@@ -12,7 +12,7 @@ import com.nukkitx.protocol.bedrock.data.SoundEvent;
 import com.nukkitx.protocol.bedrock.data.entity.EntityFlag;
 import com.nukkitx.protocol.bedrock.data.entity.EntityFlags;
 import com.nukkitx.protocol.bedrock.packet.*;
-import com.nukkitx.protocol.bedrock.v471.Bedrock_v471;
+import com.nukkitx.protocol.bedrock.v475.Bedrock_v475;
 import lombok.Getter;
 import lombok.Setter;
 import org.akmalfairuz.bedrockproxy.auth.LoginPacketGenerator;
@@ -146,7 +146,7 @@ public class Player{
                 session.disconnect();
                 return;
             }
-            session.setPacketCodec(Bedrock_v471.V471_CODEC);
+            session.setPacketCodec(Bedrock_v475.V475_CODEC);
             session.addDisconnectHandler((reason) -> {
                 connectionProcess = false;
                 if(!clientSession.isClosed()) {
