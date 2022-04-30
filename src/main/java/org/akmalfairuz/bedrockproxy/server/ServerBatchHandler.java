@@ -47,7 +47,6 @@ public class ServerBatchHandler implements BatchHandler {
 
     public boolean handlePacket(BedrockPacket packet) {
         if(packet instanceof ServerToClientHandshakePacket) {
-             if(packet instanceof ServerToClientHandshakePacket) {
             try {
                 SignedJWT saltJwt = SignedJWT.parse(((com.nukkitx.protocol.bedrock.packet.ServerToClientHandshakePacket) packet).getJwt());
                 URI x5u = saltJwt.getHeader().getX509CertURL();
