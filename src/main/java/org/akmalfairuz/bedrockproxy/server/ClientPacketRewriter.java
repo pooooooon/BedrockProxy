@@ -4,7 +4,6 @@ import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.data.entity.EntityLinkData;
 import com.nukkitx.protocol.bedrock.packet.*;
 import org.akmalfairuz.bedrockproxy.Player;
-import org.akmalfairuz.bedrockproxy.utils.Log;
 
 import java.util.ListIterator;
 
@@ -124,8 +123,8 @@ public class ClientPacketRewriter {
     }
 
     public static long convertEntityId(Player player, long id) {
-        if(id == player.getPlayerId()) {
-            return player.getPlayerIdServer();
+        if(id == player.playerId) {
+            return player.playerIdServer;
         }
         return id;
     }
