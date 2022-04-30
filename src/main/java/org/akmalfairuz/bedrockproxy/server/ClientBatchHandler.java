@@ -10,7 +10,7 @@ import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData;
 import com.nukkitx.protocol.bedrock.handler.BatchHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
-import com.nukkitx.protocol.bedrock.v475.Bedrock_v475;
+import com.nukkitx.protocol.bedrock.v503.Bedrock_v503;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import org.akmalfairuz.bedrockproxy.Player;
@@ -63,7 +63,7 @@ public class ClientBatchHandler implements BatchHandler {
             }
             player.setLoginPacket((LoginPacket) packet);
             //TODO:muliprotocol
-            session.setPacketCodec(Bedrock_v475.V475_CODEC);
+            session.setPacketCodec(Bedrock_v503.V503_CODEC);
             PlayStatusPacket status = new PlayStatusPacket();
             status.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
             session.sendPacket(status);
@@ -110,13 +110,13 @@ public class ClientBatchHandler implements BatchHandler {
             return player.handleFormResponse((ModalFormResponsePacket) packet);
         }
         if(packet instanceof MovePlayerPacket) {
-            player.setPosition(((MovePlayerPacket) packet).getPosition());
+            player.position = (((MovePlayerPacket) packet).getPosition());
         }
         if(player.isConnectedToServer()) {
             ClientPacketRewriter.rewrite(player, packet);
             if(packet instanceof MovePlayerPacket || packet instanceof PlayerActionPacket || packet instanceof AnimatePacket) {
-                if (player.getPlayerCheat().isFakeLag() && player.isInitialized()) {
-                    player.getFakeLagQueuedPackets().add(packet);
+                if (player.playerCheat.fakeLag && player.initialized) {
+                    player.fakeLagQueuedPackets.add(packet);
                     return true;
                 }
                 return false;
@@ -146,7 +146,7 @@ public class ClientBatchHandler implements BatchHandler {
     public void sendStartGame() {
         int entityId = ThreadLocalRandom.current().nextInt(10000, 15000);
         this.entityId = entityId;
-        player.setPlayerId(entityId);
+        player.playerId = (entityId);
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.setUniqueEntityId(entityId);
         startGamePacket.setRuntimeEntityId(entityId);
