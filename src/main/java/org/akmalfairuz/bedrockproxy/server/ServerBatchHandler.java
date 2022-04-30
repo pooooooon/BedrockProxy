@@ -47,6 +47,7 @@ public class ServerBatchHandler implements BatchHandler {
 
     public boolean handlePacket(BedrockPacket packet) {
         if(packet instanceof ServerToClientHandshakePacket) {
+             if(packet instanceof ServerToClientHandshakePacket) {
             try {
                 SignedJWT saltJwt = SignedJWT.parse(((com.nukkitx.protocol.bedrock.packet.ServerToClientHandshakePacket) packet).getJwt());
                 URI x5u = saltJwt.getHeader().getX509CertURL();
@@ -75,12 +76,13 @@ public class ServerBatchHandler implements BatchHandler {
             ResourcePackClientResponsePacket pk = new ResourcePackClientResponsePacket();
             pk.setStatus(ResourcePackClientResponsePacket.Status.COMPLETED);
             session.sendPacket(pk);
-            player.setConnectedToServer(true);
+            player.connectedToServer = (true);
             player.sendMessage("Connected to server!");
             return true;
         }
         if(packet instanceof StartGamePacket) {
-            player.setPlayerIdServer((int) ((StartGamePacket) packet).getRuntimeEntityId());
+            player.playerIdServer = ((int) ((StartGamePacket) packet).getRuntimeEntityId());
+            player.serverversion = ((String) ((StartGamePacket) packet).getVanillaVersion());
             player.sendMove(((StartGamePacket) packet).getPlayerPosition(), MovePlayerPacket.Mode.TELEPORT);
 
             RequestChunkRadiusPacket chunkRadiusPacket = new RequestChunkRadiusPacket();
@@ -93,17 +95,17 @@ public class ServerBatchHandler implements BatchHandler {
             session.sendPacket(tickSyncPacket);
 
             SetLocalPlayerAsInitializedPacket initializedPacket = new SetLocalPlayerAsInitializedPacket();
-            initializedPacket.setRuntimeEntityId(player.getPlayerIdServer());
+            initializedPacket.setRuntimeEntityId(player.playerIdServer);
             session.sendPacket(initializedPacket);
 
             player.setPlayerFlag(EntityFlag.HAS_GRAVITY, true);
             player.setPlayerFlag(EntityFlag.NO_AI, false);
             return true;
         }
-        if(packet instanceof PlayStatusPacket) {
+         if(packet instanceof PlayStatusPacket) {
             if(((PlayStatusPacket) packet).getStatus() == PlayStatusPacket.Status.PLAYER_SPAWN) {
                 SetLocalPlayerAsInitializedPacket initializedPacket = new SetLocalPlayerAsInitializedPacket();
-                initializedPacket.setRuntimeEntityId(player.getPlayerIdServer());
+                initializedPacket.setRuntimeEntityId(player.playerIdServer);
                 session.sendPacket(initializedPacket);
             }
             return true;
@@ -128,10 +130,10 @@ public class ServerBatchHandler implements BatchHandler {
                 packet instanceof ItemComponentPacket) {
             return true;
         }
-        if(player.isConnectedToServer()) {
+        if(player.connectedToServer) {
             if(packet instanceof MovePlayerPacket) {
-                if(((MovePlayerPacket) packet).getRuntimeEntityId() == player.getPlayerIdServer()) {
-                    player.setPosition(((MovePlayerPacket) packet).getPosition());
+                if(((MovePlayerPacket) packet).getRuntimeEntityId() == player.playerIdServer) {
+                    player.position = (((MovePlayerPacket) packet).getPosition());
                 }
             }
             ServerPacketRewriter.rewrite(player, packet);
