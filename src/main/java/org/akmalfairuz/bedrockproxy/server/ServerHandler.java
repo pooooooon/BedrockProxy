@@ -14,7 +14,7 @@ import java.net.InetSocketAddress;
 
 public class ServerHandler implements BedrockServerEventHandler {
 
-    private ProxyServer proxy;
+    public ProxyServer proxy;
 
     public ServerHandler(ProxyServer proxyServer) {
         proxy = proxyServer;
@@ -59,8 +59,8 @@ public class ServerHandler implements BedrockServerEventHandler {
         Player player = new Player(serverSession, this, proxy);
         serverSession.addDisconnectHandler((reason) -> {
             if(player.getServerSession() != null) {
-                player.getServerSession().disconnect();
-                player.setConnectedToServer(false);
+                player.serverSession.disconnect();
+                player.connectedToServer = (false);
             }
             player.close();
         });
