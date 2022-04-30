@@ -82,7 +82,6 @@ public class ServerBatchHandler implements BatchHandler {
         }
         if(packet instanceof StartGamePacket) {
             player.playerIdServer = ((int) ((StartGamePacket) packet).getRuntimeEntityId());
-            player.serverversion = ((String) ((StartGamePacket) packet).getVanillaVersion());
             player.sendMove(((StartGamePacket) packet).getPlayerPosition(), MovePlayerPacket.Mode.TELEPORT);
 
             RequestChunkRadiusPacket chunkRadiusPacket = new RequestChunkRadiusPacket();
