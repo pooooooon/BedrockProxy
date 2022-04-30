@@ -2,8 +2,6 @@ package org.akmalfairuz.bedrockproxy;
 
 import com.nukkitx.protocol.bedrock.BedrockPong;
 import com.nukkitx.protocol.bedrock.BedrockServer;
-import com.nukkitx.protocol.bedrock.v471.Bedrock_v471;
-import lombok.Getter;
 import org.akmalfairuz.bedrockproxy.server.ServerHandler;
 import org.akmalfairuz.bedrockproxy.utils.Log;
 import org.akmalfairuz.bedrockproxy.vanilla.BedrockData;
@@ -14,7 +12,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ProxyServer {
-    @Getter
     private InetSocketAddress address;
 
     public ArrayList<Player> players = new ArrayList<>();
