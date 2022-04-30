@@ -12,9 +12,7 @@ import com.nukkitx.protocol.bedrock.data.SoundEvent;
 import com.nukkitx.protocol.bedrock.data.entity.EntityFlag;
 import com.nukkitx.protocol.bedrock.data.entity.EntityFlags;
 import com.nukkitx.protocol.bedrock.packet.*;
-import com.nukkitx.protocol.bedrock.v475.Bedrock_v475;
-import lombok.Getter;
-import lombok.Setter;
+import com.nukkitx.protocol.bedrock.v486.Bedrock_v486;
 import org.akmalfairuz.bedrockproxy.auth.LoginPacketGenerator;
 import org.akmalfairuz.bedrockproxy.auth.XboxLogin;
 import org.akmalfairuz.bedrockproxy.server.ClientBatchHandler;
@@ -30,80 +28,30 @@ import java.util.*;
 public class Player{
 
     public static final String PROXY_PREFIX = "§a[PROXY]§r ";
-
-    @Getter
-    private final ServerHandler serverHandler;
-
-    @Getter
-    @Setter
-    private ClientBatchHandler clientBatchHandler;
-
-    @Getter
-    private final ProxyServer proxyServer;
-
-    @Getter
-    @Setter
-    private ServerBatchHandler serverBatchHandler;
-
-    @Getter
-    private final BedrockSession clientSession;
-
-    @Getter
-    private BedrockSession serverSession;
-
-    @Getter
-    @Setter
-    private int playerId;
-
-    @Getter
-    @Setter
-    private boolean initialized;
-
-    @Getter
-    @Setter
-    private boolean connectedToServer;
-
-    @Getter
-    private String accessToken;
-
-    @Getter
-    @Setter
-    private LoginPacket loginPacket;
-
+    public final ServerHandler serverHandler;
+    public ClientBatchHandler clientBatchHandler;
+    public final ProxyServer proxyServer;
+    public ServerBatchHandler serverBatchHandler;
+    public final BedrockSession clientSession;
+    public BedrockSession serverSession;
+    public int playerId;
+    public boolean initialized;
+    public boolean connectedToServer;
+    public String accessToken;
+    public LoginPacket loginPacket;
     public ECPublicKey publicKey;
     public ECPrivateKey privateKey;
-
     public String username;
-
     public String xuid;
-
     public String UUID;
-
-    @Getter
-    @Setter
-    private int playerIdServer;
-
-    @Getter
-    @Setter
-    private PlayerCheat playerCheat;
-
-    @Getter
-    @Setter
-    private Queue<BedrockPacket> fakeLagQueuedPackets = new ArrayDeque<>();
-
-    private TimerTask fakeLagTimer;
-
-    @Getter
-    @Setter
-    private boolean connectionProcess = false;
-
-    @Getter
-    @Setter
-    private boolean loginProcess = false;
-
-    @Setter
-    @Getter
-    private Vector3f position = Vector3f.ZERO;
+    public int playerIdServer;
+    public String serverversion;
+    public PlayerCheat playerCheat;
+    public Queue<BedrockPacket> fakeLagQueuedPackets = new ArrayDeque<>();
+    public TimerTask fakeLagTimer;
+    public boolean connectionProcess = false;
+    public boolean loginProcess = false;
+    public Vector3f position = Vector3f.ZERO;
 
     public Player(BedrockSession clientSession, ServerHandler serverHandler, ProxyServer proxy) {
         this.serverHandler = serverHandler;
@@ -119,7 +67,7 @@ public class Player{
     }
 
     public void connectToServer(String address, Integer port) {
-        if(isConnectedToServer()) {
+        if(connectedToServer) {
             return;
         }
         if(connectionProcess) {
@@ -146,7 +94,7 @@ public class Player{
                 session.disconnect();
                 return;
             }
-            session.setPacketCodec(Bedrock_v475.V475_CODEC);
+            session.setPacketCodec(Bedrock_v486.V486_CODEC);
             session.addDisconnectHandler((reason) -> {
                 connectionProcess = false;
                 if(!clientSession.isClosed()) {
@@ -168,7 +116,7 @@ public class Player{
             @Override
             public void run() {
                 if(!clientSession.isClosed()) {
-                    if(playerCheat.isFakeLag() && isConnectedToServer() && isInitialized()) {
+                    if(playerCheat.fakeLag && connectedToServer && initialized) {
                         for(BedrockPacket next = fakeLagQueuedPackets.poll(); next != null; next = fakeLagQueuedPackets.poll()) {
                             serverSession.sendPacket(next);
                         }
@@ -194,8 +142,8 @@ public class Player{
     }
 
     public void disconnectedFromServer() {
-        this.setServerBatchHandler(null);
-        this.setConnectedToServer(false);
+        this.serverBatchHandler = (null);
+        this.connectedToServer = (false);
         Log.info(clientSession.getAddress() + " Failed to connect: " + serverSession.getAddress());
     }
 
@@ -231,18 +179,18 @@ public class Player{
                     sendLoginForm();
                     return true;
                 case "connect":
-                    if(isConnectedToServer()) {
+                    if(connectedToServer) {
                         sendMessage("You are connected to server.");
                         return true;
                     }
                     sendServerForm();
                     return true;
                 case "antikb":
-                    if(playerCheat.isAntikb()) {
-                        playerCheat.setAntikb(false);
+                    if(playerCheat.antikb) {
+                        playerCheat.antikb = (false);
                         sendMessage("AntiKB Disabled");
                     } else {
-                        playerCheat.setAntikb(true);
+                        playerCheat.antikb = (true);
                         sendMessage("AntiKB Enabled");
                     }
                     return true;
@@ -250,7 +198,7 @@ public class Player{
                     MobEffectPacket packet = new MobEffectPacket();
                     packet.setRuntimeEntityId(this.playerId);
                     packet.setEffectId(3);
-                    if(playerCheat.isHaste()) {
+                    if(playerCheat.haste) {
                         packet.setEvent(MobEffectPacket.Event.ADD);
                         packet.setAmplifier(2);
                         packet.setDuration(1);
@@ -261,19 +209,18 @@ public class Player{
                         packet.setAmplifier(2);
                         packet.setDuration(999999999);
                         packet.setParticles(false);
-                        playerCheat.setHaste(false);
-                        playerCheat.setHaste(true);
+                        playerCheat.haste = (true);
                         sendMessage("Haste enabled");
                     }
                     clientSession.sendPacket(packet);
                     return true;
                 case "fakelag":
-                    if(playerCheat.isFakeLag()) {
+                    if(playerCheat.fakeLag) {
                         for(BedrockPacket next = fakeLagQueuedPackets.poll(); next != null; next = fakeLagQueuedPackets.poll()) {
                             serverSession.sendPacket(next);
                             clientSession.sendPacket(next);
                         }
-                        playerCheat.setFakeLag(false);
+                        playerCheat.fakeLag = (false);
                         fakeLagTimer.cancel();
                         sendMessage("§eFakeLag Disabled");
                     } else {
@@ -282,9 +229,9 @@ public class Player{
                     return true;
                 case "fakesound":
                     try {
-                        if (isConnectedToServer()) {
+                        if (connectedToServer) {
                             LevelSoundEventPacket sound = new LevelSoundEventPacket();
-                            sound.setPosition(getPosition());
+                            sound.setPosition(position);
                             sound.setBabySound(false);
                             sound.setExtraData(1);
                             sound.setRelativeVolumeDisabled(false);
@@ -313,7 +260,7 @@ public class Player{
         return false;
     }
 
-    private void fakeLagForm() {
+    public void fakeLagForm() {
         ModalFormRequestPacket form = new ModalFormRequestPacket();
         form.setFormId(-50003);
 
@@ -338,7 +285,7 @@ public class Player{
         clientSession.sendPacket(form);
     }
 
-    private void sendServerForm() {
+    public void sendServerForm() {
         ModalFormRequestPacket form = new ModalFormRequestPacket();
         form.setFormId(-50002);
 
@@ -415,7 +362,7 @@ public class Player{
         clientSession.sendPacket(form);
     }
 
-    private void sendLoginForm() {
+    public void sendLoginForm() {
         ModalFormRequestPacket form = new ModalFormRequestPacket();
         form.setFormId(-50001);
 
@@ -478,26 +425,26 @@ public class Player{
             if(formData.get(4) == null) {
                 return true;
             }
-            if(isConnectedToServer()) {
+            if(connectedToServer) {
                 sendMessage("You are connected to server.");
                 return true;
             }
             String address = (String) formData.get(0);
             Integer port = Integer.parseInt((String) formData.get(1));
             String deviceModel = (String) formData.get(2);
-            playerCheat.setDeviceModel(deviceModel);
+            playerCheat.deviceModel = (deviceModel);
             int currentInputMode = (int) formData.get(3) - 1;
-            playerCheat.setCurrentInputMode(currentInputMode);
+            playerCheat.currentInputMode = (currentInputMode);
             int deviceOS = (int) formData.get(4);
             if(deviceOS != 0) {
-                playerCheat.setDeviceOS(deviceOS);
+                playerCheat.deviceOS = (deviceOS);
             }
             sendMessage("Connecting to " + address + ":" + port + "...");
             connectToServer(address, port);
             return true;
         }
         if(formId == -50003) { // fake lag
-            if(!isConnectedToServer()) {
+            if(!connectedToServer) {
                 sendMessage("§cYou are not connected to server.");
                 return true;
             }
@@ -505,7 +452,7 @@ public class Player{
             if(formData.get(0) == null) {
                 return true;
             }
-            getPlayerCheat().setFakeLag(true);
+            playerCheat.fakeLag = (true);
             createFakeLagTimer((int) Double.parseDouble(formData.get(0)));
             sendMessage("§bFakeLag Enabled with delay " + formData.get(0) + "ms! To disable type /.fakelag");
             return true;
