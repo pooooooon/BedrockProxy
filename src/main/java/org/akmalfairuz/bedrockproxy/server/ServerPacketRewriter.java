@@ -42,8 +42,8 @@ public class ServerPacketRewriter {
             return;
         }
         if(packet instanceof SetEntityMotionPacket) {
-            if(((SetEntityMotionPacket) packet).getRuntimeEntityId() == player.getPlayerIdServer()) {
-                if(player.getPlayerCheat().isAntikb()) {
+            if(((SetEntityMotionPacket) packet).getRuntimeEntityId() == player.playerIdServer) {
+                if(player.playerCheat.antikb) {
                     return;
                 }
             }
@@ -142,8 +142,8 @@ public class ServerPacketRewriter {
     }
 
     public static long convertEntityId(Player player, long id) {
-        if(id == player.getPlayerIdServer()) {
-            return player.getPlayerId();
+        if(id == player.playerIdServer) {
+            return player.playerId;
         }
         return id;
     }
